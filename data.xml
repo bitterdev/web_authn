@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<concrete5-cif version="1.0">
+    <singlepages>
+        <page name="Passkeys" path="/account/passkeys"
+              filename="/account/passkeys.php" package="web_authn"/>
+    </singlepages>
+</concrete5-cif>

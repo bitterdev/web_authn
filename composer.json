@@ -1,0 +1,15 @@
+{
+  "name": "fabianbitter/web_authn",
+  "license": "MIT",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "authors": [
+    {
+      "name": "Fabian Bitter",
+      "email": "fabian@bitter.de"
+    }
+  ],
+  "require": {
+    "lbuchs/webauthn": "^2.2"
+  }
+}
