@@ -2,7 +2,6 @@
 
 namespace Concrete\Package\WebAuthn\Authentication\WebAuthn;
 
-use Concrete\Core\Application\UserInterface\Dashboard\Navigation\NavigationCache;
 use Concrete\Core\Authentication\AuthenticationType;
 use Concrete\Core\Authentication\AuthenticationTypeController;
 use Concrete\Core\Database\Connection\Connection;
@@ -17,7 +16,6 @@ use Concrete\Core\Support\Facade\Url;
 use Concrete\Core\User\User;
 use Concrete\Authentication\Concrete\Controller as ConcreteAuthController;
 use Doctrine\DBAL\Exception;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use lbuchs\WebAuthn\WebAuthn;
 use lbuchs\WebAuthn\WebAuthnException;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -173,7 +171,7 @@ class Controller extends AuthenticationTypeController
     }
 
     /**
-     * @throws UserMessageException|BindingResolutionException
+     * @throws UserMessageException
      * @noinspection DuplicatedCode
      */
     public function register_passkey()
@@ -211,11 +209,6 @@ class Controller extends AuthenticationTypeController
 
                         User::getByUserID($uID, true);
 
-                        /** @var NavigationCache $navigationCache */
-                        /** @noinspection PhpUnhandledExceptionInspection */
-                        $navigationCache = $this->app->make(NavigationCache::class);
-                        $navigationCache->clear();
-
                         $this->responseFactory->redirect(Url::to(['/login', 'login_complete']))->send();
                         $this->app->shutdown();
 
@@ -239,7 +232,7 @@ class Controller extends AuthenticationTypeController
 
 
     /**
-     * @throws UserMessageException|BindingResolutionException
+     * @throws UserMessageException
      */
     public function skip_register_passkey()
     {
@@ -247,11 +240,6 @@ class Controller extends AuthenticationTypeController
 
         if ($uID > 0) {
             User::getByUserID($uID, true);
-
-            /** @var NavigationCache $navigationCache */
-            /** @noinspection PhpUnhandledExceptionInspection */
-            $navigationCache = $this->app->make(NavigationCache::class);
-            $navigationCache->clear();
 
             $this->responseFactory->redirect(Url::to(['/login', 'login_complete']))->send();
             $this->app->shutdown();
