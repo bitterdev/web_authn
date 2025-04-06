@@ -51,9 +51,11 @@ $form = $app->make(Form::class);
                 </td>
 
                 <td>
-                    <a href="<?php echo Url::to(Page::getCurrentPage(), "remove_passkey", $passkey["id"]) ?>">
-                        <?php echo t("Remove Passkey"); ?>
-                    </a>
+                    <div class="float-end">
+                        <a href="<?php echo Url::to(Page::getCurrentPage(), "remove_passkey", $passkey["id"]) ?>">
+                            <?php echo t("Remove Passkey"); ?>
+                        </a>
+                    </div>
                 </td>
             </tr>
         <?php } ?>

@@ -79,11 +79,12 @@ class Passkeys extends AccountPageController
         $this->set("passkeys", $passkeys);
 
         $args = $this->webAuthn->getCreateArgs($u->getUserID(), $u->getUserName(), $u->getUserName(), 60000);
-        $this->session->set("challenge", ($this->webAuthn->getChallenge())->getBinaryString());
+        $this->session->set("webauthn-register-challenge", ($this->webAuthn->getChallenge())->getBinaryString());
         $this->session->save();
         $this->set('args', $args);
     }
 
+    /** @noinspection DuplicatedCode */
     public function register_passkey()
     {
         /** @var User $u */
@@ -94,6 +95,7 @@ class Passkeys extends AccountPageController
 
         $this->formValidator->setData($data);
 
+        $this->formValidator->addRequiredToken("register_passkey");
         $this->formValidator->addRequired("clientDataJSON");
         $this->formValidator->addRequired("attestationObject");
 
@@ -102,7 +104,7 @@ class Passkeys extends AccountPageController
                 $registration = $this->webAuthn->processCreate(
                     base64_decode($data["clientDataJSON"]),
                     base64_decode($data["attestationObject"]),
-                    $this->session->get("challenge")
+                    $this->session->get("webauthn-register-challenge")
                 );
 
                 $credentialId = $registration->credentialId;

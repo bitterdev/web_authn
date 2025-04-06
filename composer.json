@@ -11,5 +11,13 @@
   ],
   "require": {
     "lbuchs/webauthn": "^2.2"
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "sh ./cleanup-vendor-code.sh"
+    ],
+    "post-update-cmd": [
+      "sh ./cleanup-vendor-code.sh"
+    ]
   }
 }

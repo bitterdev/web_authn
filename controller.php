@@ -5,12 +5,16 @@ namespace Concrete\Package\WebAuthn;
 use Concrete\Core\Authentication\AuthenticationType;
 use Concrete\Core\Package\Package;
 use Concrete\Core\Entity\Package as PackageEntity;
+use WebAuthn\Provider\ServiceProvider;
 
 class Controller extends Package
 {
     protected string $pkgHandle = 'web_authn';
-    protected string $pkgVersion = '0.0.2';
+    protected string $pkgVersion = '0.0.1';
     protected $appVersionRequired = '9.0.0';
+    protected $pkgAutoloaderRegistries = [
+        'src/WebAuthn' => 'WebAuthn',
+    ];
 
     public function getPackageName(): string
     {
@@ -25,11 +29,16 @@ class Controller extends Package
     public function on_start()
     {
         require_once("vendor/autoload.php");
+
+        /** @var ServiceProvider $serviceProvider */
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $serviceProvider = $this->app->make(ServiceProvider::class);
+        $serviceProvider->register();
     }
 
     public function install(): PackageEntity
     {
-        require_once("vendor/autoload.php");
+        $this->on_start();
 
         $pkg = parent::install();
         $this->installContentFile("data.xml");
