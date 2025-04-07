@@ -23,7 +23,7 @@ $form = $app->make(Form::class);
 
 <?php if ($isRegister) { ?>
     <form method="post"
-          action="<?php echo h(Url::to('/login', $this->getAuthenticationTypeHandle(), 'register_passkey')); ?>"
+          action="<?php echo h(Url::to('/login_public', $this->getAuthenticationTypeHandle(), 'register_passkey')); ?>"
           id="passkey-register-form">
         <?php $token->output('register_passkey'); ?>
 
@@ -111,7 +111,7 @@ $form = $app->make(Form::class);
     <hr>
 
     <div class="text-center">
-        <a href="<?php echo Url::to('/login', $this->getAuthenticationTypeHandle(), 'skip_register_passkey') ?>">
+        <a href="<?php echo Url::to('/login_public', $this->getAuthenticationTypeHandle(), 'skip_register_passkey') ?>">
             <?php echo t("I don't want to create a passkey"); ?>
         </a>
     </div>

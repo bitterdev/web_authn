@@ -6,6 +6,7 @@ use Concrete\Core\Application\Application;
 use Concrete\Core\Database\Connection\Connection;
 use Concrete\Core\Foundation\Service\Provider;
 use Concrete\Core\Http\ResponseFactoryInterface;
+use Concrete\Core\Routing\RouterInterface;
 use Concrete\Core\Support\Facade\Url;
 use Concrete\Core\User\Event\User;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -17,12 +18,14 @@ class ServiceProvider extends Provider
     protected Connection $db;
     protected ResponseFactoryInterface $responseFactory;
     protected Session $session;
+    protected RouterInterface $router;
 
     public function __construct(
         Application              $app,
         EventDispatcherInterface $eventDispatcher,
         Connection               $db,
-        ResponseFactoryInterface $responseFactory
+        ResponseFactoryInterface $responseFactory,
+        RouterInterface          $router
     )
     {
         parent::__construct($app);
@@ -30,6 +33,7 @@ class ServiceProvider extends Provider
         $this->eventDispatcher = $eventDispatcher;
         $this->db = $db;
         $this->responseFactory = $responseFactory;
+        $this->router = $router;
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->session = $this->app->make("session");
@@ -38,6 +42,14 @@ class ServiceProvider extends Provider
     public function register()
     {
         $this->registerEventHandlers();
+        $this->registerRoutes();
+    }
+
+    protected function registerRoutes()
+    {
+        // Make this routes public available
+        $this->router->all('/login_public/web_authn/skip_register_passkey', '\Concrete\Package\WebAuthn\Authentication\WebAuthn\Controller::skip_register_passkey');
+        $this->router->all('/login_public/web_authn/register_passkey', '\Concrete\Package\WebAuthn\Authentication\WebAuthn\Controller::register_passkey');
     }
 
     protected function registerEventHandlers()
