@@ -215,7 +215,8 @@ class Controller extends AuthenticationTypeController
                         $this->db->insert("authTypeWebAuthn", [
                             "credentialId" => base64_encode($credentialId),
                             "publicKey" => $publicKey,
-                            "uID" => $u->getUserID()
+                            "uID" => $u->getUserID(),
+                            "createdAt" => date('Y-m-d H:i:s')
                         ]);
 
                         $u = User::getByUserID($uID, true);

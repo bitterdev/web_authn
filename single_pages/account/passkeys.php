@@ -3,6 +3,7 @@
 defined('C5_EXECUTE') or die('Access Denied');
 
 use Concrete\Core\Form\Service\Form;
+use Concrete\Core\Localization\Service\Date;
 use Concrete\Core\Page\Page;
 use Concrete\Core\Support\Facade\Application;
 use Concrete\Core\Support\Facade\Url;
@@ -18,6 +19,9 @@ $token = $app->make(Token::class);
 /** @var Form $form */
 /** @noinspection PhpUnhandledExceptionInspection */
 $form = $app->make(Form::class);
+/** @var Date $dateService */
+/** @noinspection PhpUnhandledExceptionInspection */
+$dateService = $app->make(Date::class);
 
 ?>
 
@@ -34,7 +38,7 @@ $form = $app->make(Form::class);
         <thead>
         <tr>
             <th>
-                <?php echo t("ID"); ?>
+                <?php echo t("Passkey"); ?>
             </th>
 
             <th>
@@ -47,7 +51,16 @@ $form = $app->make(Form::class);
         <?php foreach ($passkeys as $passkey) { ?>
             <tr>
                 <td>
-                    <?php echo $passkey["id"]; ?>
+                    <?php
+                    $createdAt = DateTime::createFromFormat("Y-m-d H:i:s", $passkey["createdAt"]);
+                    $createdAtDisplayValue = t("Invalid Date");
+
+                    if ($createdAt instanceof DateTime) {
+                        $createdAtDisplayValue = $dateService->formatDateTime($createdAt);
+                    }
+
+                    echo t("Passkey from %s", $createdAtDisplayValue);
+                    ?>
                 </td>
 
                 <td>

@@ -1,3 +1,8 @@
+Version 0.0.6
+==================================================
+- Display Date/Time isntead of ID in Frontend
+- Add missing email template to package
+
 Version 0.0.5
 ==================================================
 - Update logic to make this work with other on_user_login event handlers

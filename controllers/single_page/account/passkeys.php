@@ -80,7 +80,7 @@ class Passkeys extends AccountPageController
         /** @noinspection PhpDeprecationInspection */
         /** @noinspection SqlDialectInspection */
         /** @noinspection SqlNoDataSourceInspection */
-        $passkeys = $this->db->fetchAll("SELECT id FROM authTypeWebAuthn WHERE uID = ?", [$u->getUserID()]);
+        $passkeys = $this->db->fetchAll("SELECT id, createdAt FROM authTypeWebAuthn WHERE uID = ?", [$u->getUserID()]);
         $this->set("passkeys", $passkeys);
 
         $args = $this->webAuthn->getCreateArgs($u->getUserID(), $u->getUserName(), $u->getUserName(), 60000);
@@ -118,7 +118,8 @@ class Passkeys extends AccountPageController
                 $this->db->insert("authTypeWebAuthn", [
                     "credentialId" => base64_encode($credentialId),
                     "publicKey" => $publicKey,
-                    "uID" => $u->getUserID()
+                    "uID" => $u->getUserID(),
+                    "createdAt" => date('Y-m-d H:i:s')
                 ]);
 
                 if ($u->getUserInfoObject() instanceof UserInfo &&

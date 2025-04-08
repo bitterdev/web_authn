@@ -13,5 +13,6 @@
             <unsigned/>
             <key/>
         </field>
+        <field name="createdAt" type="datetime"/>
     </table>
 </schema>
