@@ -9,6 +9,7 @@ use Concrete\Core\Entity\Site\Site;
 use Concrete\Core\Error\UserMessageException;
 use Concrete\Core\Form\Service\Validation;
 use Concrete\Core\Http\Request;
+use Concrete\Core\Http\Response;
 use Concrete\Core\Http\ResponseFactoryInterface;
 use Concrete\Core\Mail\Service as MailService;
 use Concrete\Core\Site\Config\Liaison;
@@ -20,6 +21,8 @@ use Concrete\Core\User\UserInfo;
 use Doctrine\DBAL\Exception;
 use lbuchs\WebAuthn\WebAuthn;
 use lbuchs\WebAuthn\WebAuthnException;
+use stdClass;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Throwable;
 
@@ -37,6 +40,7 @@ class Controller extends AuthenticationTypeController
     protected Validation $formValidator;
     protected ConcreteAuthController $coreAuthController;
     protected MailService $mailService;
+    protected EventDispatcherInterface $eventDispatcher;
 
     /** @noinspection DuplicatedCode */
     public function __construct(AuthenticationType $type = null)
@@ -59,6 +63,8 @@ class Controller extends AuthenticationTypeController
         $this->coreAuthController = new ConcreteAuthController($type);
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->mailService = $this->app->make(MailService::class);
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $this->eventDispatcher = $this->app->make(EventDispatcherInterface::class);
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->webAuthn = new WebAuthn(
@@ -222,7 +228,16 @@ class Controller extends AuthenticationTypeController
                             $this->mailService->sendMail();
                         }
 
-                        $this->responseFactory->redirect(Url::to(['/login', 'login_complete']))->send();
+                        /** @var stdClass $state */
+                        /** @noinspection PhpUnhandledExceptionInspection */
+                        $state = $this->app->make('web_authn/global/state');
+                        $state->skipEventHandler = true;
+
+                        $ue = new \Concrete\Core\User\Event\User($u);
+                        /** @noinspection PhpUnhandledExceptionInspection */
+                        $this->eventDispatcher->dispatch($ue, 'on_user_login');
+
+                        $this->responseFactory->redirect(Url::to(['/login', 'login_complete']), Response::HTTP_TEMPORARY_REDIRECT)->send();
                         $this->app->shutdown();
 
                     } catch (WebAuthnException|Exception $e) {
@@ -252,9 +267,18 @@ class Controller extends AuthenticationTypeController
         $uID = $this->session->get("stored-user-id");
 
         if ($uID > 0) {
-            User::getByUserID($uID, true);
+            $u = User::getByUserID($uID, true);
 
-            $this->responseFactory->redirect(Url::to(['/login', 'login_complete']))->send();
+            /** @var stdClass $state */
+            /** @noinspection PhpUnhandledExceptionInspection */
+            $state = $this->app->make('web_authn/global/state');
+            $state->skipEventHandler = true;
+
+            $ue = new \Concrete\Core\User\Event\User($u);
+            /** @noinspection PhpUnhandledExceptionInspection */
+            $this->eventDispatcher->dispatch($ue, 'on_user_login');
+
+            $this->responseFactory->redirect(Url::to(['/login', 'login_complete'], Response::HTTP_TEMPORARY_REDIRECT))->send();
             $this->app->shutdown();
         } else {
             $this->setRegisterDefaults();

@@ -11,6 +11,7 @@ use Concrete\Core\Support\Facade\Url;
 use Concrete\Core\User\Event\User;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
+use stdClass;
 
 class ServiceProvider extends Provider
 {
@@ -37,6 +38,14 @@ class ServiceProvider extends Provider
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->session = $this->app->make("session");
+
+        $app->singleton('web_authn/global/state', function () {
+            return new stdClass();
+        });
+
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $state = $this->app->make('web_authn/global/state');
+        $state->skipEventHandler = false;
     }
 
     public function register()
@@ -55,6 +64,12 @@ class ServiceProvider extends Provider
     protected function registerEventHandlers()
     {
         $this->eventDispatcher->addListener("on_user_login", function ($event) {
+            $state = $this->app->make('web_authn/global/state');
+
+            if ($state->skipEventHandler) {
+                return;
+            }
+
             /** @var User $event */
             $user = $event->getUserObject();
 
