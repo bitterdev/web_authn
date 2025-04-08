@@ -10,11 +10,13 @@ use Concrete\Core\Error\UserMessageException;
 use Concrete\Core\Form\Service\Validation;
 use Concrete\Core\Http\Request;
 use Concrete\Core\Http\ResponseFactoryInterface;
+use Concrete\Core\Mail\Service as MailService;
 use Concrete\Core\Site\Config\Liaison;
 use Concrete\Core\Site\Service;
 use Concrete\Core\Support\Facade\Url;
 use Concrete\Core\User\User;
 use Concrete\Authentication\Concrete\Controller as ConcreteAuthController;
+use Concrete\Core\User\UserInfo;
 use Doctrine\DBAL\Exception;
 use lbuchs\WebAuthn\WebAuthn;
 use lbuchs\WebAuthn\WebAuthnException;
@@ -34,6 +36,7 @@ class Controller extends AuthenticationTypeController
     protected Connection $db;
     protected Validation $formValidator;
     protected ConcreteAuthController $coreAuthController;
+    protected MailService $mailService;
 
     /** @noinspection DuplicatedCode */
     public function __construct(AuthenticationType $type = null)
@@ -54,6 +57,8 @@ class Controller extends AuthenticationTypeController
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->formValidator = $this->app->make(Validation::class);
         $this->coreAuthController = new ConcreteAuthController($type);
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $this->mailService = $this->app->make(MailService::class);
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->webAuthn = new WebAuthn(
@@ -207,7 +212,15 @@ class Controller extends AuthenticationTypeController
                             "uID" => $u->getUserID()
                         ]);
 
-                        User::getByUserID($uID, true);
+                        $u = User::getByUserID($uID, true);
+
+                        if ($u->getUserInfoObject() instanceof UserInfo &&
+                            filter_var($u->getUserInfoObject()->getUserEmail(), FILTER_VALIDATE_EMAIL)) {
+                            $this->mailService->load("passkey_removed", "web_authn");
+                            $this->mailService->to($u->getUserInfoObject()->getUserEmail());
+                            /** @noinspection PhpUnhandledExceptionInspection */
+                            $this->mailService->sendMail();
+                        }
 
                         $this->responseFactory->redirect(Url::to(['/login', 'login_complete']))->send();
                         $this->app->shutdown();

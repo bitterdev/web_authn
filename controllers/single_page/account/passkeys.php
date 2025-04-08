@@ -15,7 +15,9 @@ use Concrete\Core\Site\Service;
 use Concrete\Core\Support\Facade\Application;
 use Concrete\Core\Support\Facade\Url;
 use Concrete\Core\User\User;
+use Concrete\Core\User\UserInfo;
 use Doctrine\DBAL\Exception;
+use Concrete\Core\Mail\Service as MailService;
 use lbuchs\WebAuthn\WebAuthn;
 use lbuchs\WebAuthn\WebAuthnException;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -36,6 +38,7 @@ class Passkeys extends AccountPageController
     protected $error;
     /** @var \Concrete\Core\Application\Application */
     protected $app;
+    protected MailService $mailService;
 
     /** @noinspection DuplicatedCode */
     public function __construct(Page $c)
@@ -57,6 +60,8 @@ class Passkeys extends AccountPageController
         $this->db = $this->app->make(Connection::class);
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->formValidator = $this->app->make(Validation::class);
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $this->mailService = $this->app->make(MailService::class);
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->webAuthn = new WebAuthn(
@@ -116,6 +121,14 @@ class Passkeys extends AccountPageController
                     "uID" => $u->getUserID()
                 ]);
 
+                if ($u->getUserInfoObject() instanceof UserInfo &&
+                    filter_var($u->getUserInfoObject()->getUserEmail(), FILTER_VALIDATE_EMAIL)) {
+                    $this->mailService->load("passkey_added", "web_authn");
+                    $this->mailService->to($u->getUserInfoObject()->getUserEmail());
+                    /** @noinspection PhpUnhandledExceptionInspection */
+                    $this->mailService->sendMail();
+                }
+
                 $this->set("success", t("The passkey has been registered successfully."));
 
             } catch (WebAuthnException|Exception $e) {
@@ -150,6 +163,14 @@ class Passkeys extends AccountPageController
                 $this->db->delete("authTypeWebAuthn", ["id" => (int)$id]);
             } catch (Exception $e) {
                 $this->error->add($e);
+            }
+
+            if ($u->getUserInfoObject() instanceof UserInfo &&
+                filter_var($u->getUserInfoObject()->getUserEmail(), FILTER_VALIDATE_EMAIL)) {
+                $this->mailService->load("passkey_removed", "web_authn");
+                $this->mailService->to($u->getUserInfoObject()->getUserEmail());
+                /** @noinspection PhpUnhandledExceptionInspection */
+                $this->mailService->sendMail();
             }
 
             $this->set("success", t("The passkey has been removed successfully."));
