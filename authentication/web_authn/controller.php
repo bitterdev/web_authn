@@ -223,7 +223,7 @@ class Controller extends AuthenticationTypeController
 
                         if ($u->getUserInfoObject() instanceof UserInfo &&
                             filter_var($u->getUserInfoObject()->getUserEmail(), FILTER_VALIDATE_EMAIL)) {
-                            $this->mailService->load("passkey_removed", "web_authn");
+                            $this->mailService->load("passkey_added", "web_authn");
                             $this->mailService->to($u->getUserInfoObject()->getUserEmail());
                             /** @noinspection PhpUnhandledExceptionInspection */
                             $this->mailService->sendMail();

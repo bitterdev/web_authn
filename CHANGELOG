@@ -1,6 +1,10 @@
+Version 0.0.7
+==================================================
+- Use correct email template
+
 Version 0.0.6
 ==================================================
-- Display Date/Time isntead of ID in Frontend
+- Display Date/Time instead of ID in Frontend
 - Add missing email template to package
 
 Version 0.0.5
