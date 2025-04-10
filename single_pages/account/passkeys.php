@@ -65,7 +65,8 @@ $dateService = $app->make(Date::class);
 
                 <td>
                     <div class="float-end">
-                        <a href="<?php echo Url::to(Page::getCurrentPage(), "remove_passkey", $passkey["id"]) ?>">
+                        <a href="<?php echo Url::to(Page::getCurrentPage(), "remove_passkey", $passkey["id"]) ?>"
+                           class="btn btn-danger btn-sm">
                             <?php echo t("Remove Passkey"); ?>
                         </a>
                     </div>
@@ -84,7 +85,7 @@ $dateService = $app->make(Date::class);
     <?php echo $form->hidden("clientDataJSON"); ?>
     <?php echo $form->hidden("attestationObject"); ?>
 
-    <a href="javascript:void(0);" id="passkey-register" class="disabled">
+    <a href="javascript:void(0);" id="passkey-register" class="btn btn-primary disabled">
         <?php echo t("Register Passkey"); ?>
     </a>
 </form>
