@@ -84,7 +84,7 @@ $dateService = $app->make(Date::class);
     <?php echo $form->hidden("clientDataJSON"); ?>
     <?php echo $form->hidden("attestationObject"); ?>
 
-    <a href="javascript:void(0);" id="passkey-register">
+    <a href="javascript:void(0);" id="passkey-register" class="disabled">
         <?php echo t("Register Passkey"); ?>
     </a>
 </form>

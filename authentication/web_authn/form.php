@@ -35,7 +35,7 @@ $form = $app->make(Form::class);
                 <?php echo t("You're logged in. For added security and convenience, you can now create a passkey. Passkeys let you sign in without a password — using your fingerprint, face recognition, or device PIN."); ?>
             </p>
 
-            <a href="javascript:void(0);" class="btn btn-primary" id="passkey-register">
+            <a href="javascript:void(0);" class="btn btn-primary disabled" id="passkey-register">
                 <?php echo t("Register Passkey"); ?>
             </a>
         </div>
