@@ -5,6 +5,7 @@ namespace WebAuthn\Provider;
 use Concrete\Core\Application\Application;
 use Concrete\Core\Database\Connection\Connection;
 use Concrete\Core\Foundation\Service\Provider;
+use Concrete\Core\Http\Request;
 use Concrete\Core\Http\ResponseFactoryInterface;
 use Concrete\Core\Routing\RouterInterface;
 use Concrete\Core\Support\Facade\Url;
@@ -83,6 +84,15 @@ class ServiceProvider extends Provider
 
             if ($countOfPasskeys === 0) {
                 $user->logout(false);
+
+                /** @var Request $r */
+                $r = $this->app->make(Request::class);
+
+                if ((int)$r->request->get("maintainLogin", 0) === 1) {
+                    $this->session->set("maintain-login", true);
+                } else {
+                    $this->session->remove("maintain-login");
+                }
 
                 $this->session->set("stored-user-id", $uID);
                 $this->session->save();

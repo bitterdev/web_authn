@@ -127,6 +127,7 @@ $form = $app->make(Form::class);
             <?php echo $form->hidden("authenticatorData"); ?>
             <?php echo $form->hidden("signature"); ?>
             <?php echo $form->hidden("userHandle"); ?>
+            <?php echo $form->hidden("maintainLogin"); ?>
 
             <button class="btn btn-primary disabled" id="passkey-login">
                 <?php echo t("Login with Passkey"); ?>
@@ -188,6 +189,7 @@ $form = $app->make(Form::class);
                                     $("#authenticatorData").val(credential.response.authenticatorData ? helper.atb(credential.response.authenticatorData) : null);
                                     $("#signature").val(credential.response.signature ? helper.atb(credential.response.signature) : null);
                                     $("#userHandle").val(credential.response.userHandle ? helper.atb(credential.response.userHandle) : null);
+                                    $("#maintainLogin").val($("#uMaintainLogin").is(":checked") ? 1 : 0);
 
                                     $("#passkey-login-form").submit();
                                 });

@@ -153,7 +153,14 @@ class Controller extends AuthenticationTypeController
 
             $this->setDefaults();
 
-            return User::getByUserID($uID, true);
+            $user = User::getByUserID($uID, true);
+
+            if ((int)$this->request->request->get("maintainLogin", 0) === 1) {
+                $user->setAuthTypeCookie("concrete");
+            }
+
+            return $user;
+
         } else {
             $this->setDefaults();
             throw new UserMessageException(t("Malformed request"));
@@ -238,6 +245,11 @@ class Controller extends AuthenticationTypeController
                         /** @noinspection PhpUnhandledExceptionInspection */
                         $this->eventDispatcher->dispatch($ue, 'on_user_login');
 
+                        if ($this->session->has("maintain-login")) {
+                            /** @noinspection PhpUnhandledExceptionInspection */
+                            $u->setAuthTypeCookie("concrete");
+                        }
+
                         $this->responseFactory->redirect(Url::to(['/login', 'login_complete']), Response::HTTP_TEMPORARY_REDIRECT)->send();
                         $this->app->shutdown();
 
@@ -278,6 +290,11 @@ class Controller extends AuthenticationTypeController
             $ue = new \Concrete\Core\User\Event\User($u);
             /** @noinspection PhpUnhandledExceptionInspection */
             $this->eventDispatcher->dispatch($ue, 'on_user_login');
+
+            if ($this->session->has("maintain-login")) {
+                /** @noinspection PhpUnhandledExceptionInspection */
+                $u->setAuthTypeCookie("concrete");
+            }
 
             $this->responseFactory->redirect(Url::to(['/login', 'login_complete'], Response::HTTP_TEMPORARY_REDIRECT))->send();
             $this->app->shutdown();
