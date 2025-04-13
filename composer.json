@@ -14,5 +14,10 @@
     "post-update-cmd": [
       "sh ./cleanup-vendor-code.sh"
     ]
+  },
+  "autoload": {
+    "psr-4": {
+      "Bitter\\WebAuthn\\": "src/Bitter/WebAuthn"
+    }
   }
 }
