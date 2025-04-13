@@ -1,14 +1,9 @@
 {
-  "name": "fabianbitter/web_authn",
-  "license": "MIT",
+  "name": "bitterdev/web_authn",
+  "description": "Authenticate users with Passkeys: fingerprints, patterns and biometric data.",
+  "type": "concrete5-package",
   "minimum-stability": "dev",
   "prefer-stable": true,
-  "authors": [
-    {
-      "name": "Fabian Bitter",
-      "email": "fabian@bitter.de"
-    }
-  ],
   "require": {
     "lbuchs/webauthn": "^2.2"
   },
