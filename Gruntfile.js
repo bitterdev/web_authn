@@ -49,6 +49,7 @@ module.exports = function (grunt) {
                     {src: ['controllers/**'], dest: "dist/"},
                     {src: ['single_pages/**'], dest: "dist/"},
                     {src: ['vendor/**'], dest: "dist/"},
+                    {src: ['elements/**'], dest: "dist/"},
                     {src: ['mail/**'], dest: "dist/"},
                     {src: ['src/**'], dest: "dist/"},
                     {src: ['controller.php'], dest: "dist/", filter: 'isFile'},
