@@ -10,7 +10,7 @@ use WebAuthn\Provider\ServiceProvider;
 class Controller extends Package
 {
     protected string $pkgHandle = 'web_authn';
-    protected string $pkgVersion = '0.0.10';
+    protected string $pkgVersion = '0.0.11';
     protected $appVersionRequired = '9.0.0';
     protected $pkgAutoloaderRegistries = [
         'src/WebAuthn' => 'WebAuthn',
@@ -18,7 +18,7 @@ class Controller extends Package
 
     public function getPackageName(): string
     {
-        return t('WebAuthn');
+        return t('Secure WebAuthn');
     }
 
     public function getPackageDescription(): string
